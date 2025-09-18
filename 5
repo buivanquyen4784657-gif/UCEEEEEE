@@ -1,0 +1,226 @@
+⚔️ Perfect.
+We are now entering PART 5 — full serialization of Pine Script v6 built-in function signatures grouped by namespace.
+
+This will be exhaustive. Each function will have:
+	•	Signature (exact Pine syntax)
+	•	Parameters (with types and defaults)
+	•	Return type
+	•	Notes / canonical usage rules (so an offline LLM never misuses it).
+
+We’ll start with Namespace: array since it’s one of the most error-prone categories.
+
+⸻
+
+
+{
+  "SECTION": "2.0",
+  "PART": "5",
+  "CHECKSUM": "PINESCRIPT_V6_API_SIGNATURES_ARRAY",
+  "CONTENT": {
+    "array": {
+      "array.new_int": {
+        "signature": "array.new_int(size, initial_value = 0)",
+        "params": {
+          "size": "series int → length of array",
+          "initial_value": "series int → optional, default 0"
+        },
+        "returns": "array int",
+        "notes": "Always declare with fixed size; cannot be resized dynamically beyond functions like push/unshift."
+      },
+      "array.new_float": {
+        "signature": "array.new_float(size, initial_value = 0.0)",
+        "params": {
+          "size": "series int",
+          "initial_value": "series float → optional, default 0.0"
+        },
+        "returns": "array float",
+        "notes": "Avoid very large arrays for performance reasons."
+      },
+      "array.new_bool": {
+        "signature": "array.new_bool(size, initial_value = false)",
+        "params": {
+          "size": "series int",
+          "initial_value": "series bool → optional, default false"
+        },
+        "returns": "array bool",
+        "notes": "Booleans are efficient for flags; initialize explicitly to avoid NA propagation."
+      },
+      "array.new_string": {
+        "signature": "array.new_string(size, initial_value = \"\")",
+        "params": {
+          "size": "series int",
+          "initial_value": "series string → optional, default empty string"
+        },
+        "returns": "array string",
+        "notes": "Best used sparingly for labeling or debugging; string arrays consume memory."
+      },
+      "array.new_color": {
+        "signature": "array.new_color(size, initial_value = color.black)",
+        "params": {
+          "size": "series int",
+          "initial_value": "series color → default black"
+        },
+        "returns": "array color",
+        "notes": "Commonly used for gradient fills; prefer defining static palettes."
+      },
+      "array.copy": {
+        "signature": "array.copy(src_array)",
+        "params": {
+          "src_array": "array<any>"
+        },
+        "returns": "array<any>",
+        "notes": "Creates a shallow copy; does not clone nested arrays."
+      },
+      "array.concat": {
+        "signature": "array.concat(array1, array2)",
+        "params": {
+          "array1": "array<any>",
+          "array2": "array<any>"
+        },
+        "returns": "array<any>",
+        "notes": "Concatenates two arrays into a new one; inefficient for frequent use."
+      },
+      "array.get": {
+        "signature": "array.get(id, index)",
+        "params": {
+          "id": "array<any>",
+          "index": "series int → 0-based index"
+        },
+        "returns": "any",
+        "notes": "Will throw runtime error if index is out of bounds. Always check array.size() before."
+      },
+      "array.set": {
+        "signature": "array.set(id, index, value)",
+        "params": {
+          "id": "array<any>",
+          "index": "series int",
+          "value": "any"
+        },
+        "returns": "void",
+        "notes": "Use responsibly; out-of-bounds indices will cause runtime error."
+      },
+      "array.insert": {
+        "signature": "array.insert(id, index, value)",
+        "params": {
+          "id": "array<any>",
+          "index": "series int",
+          "value": "any"
+        },
+        "returns": "void",
+        "notes": "Expensive operation; shifts subsequent elements."
+      },
+      "array.push": {
+        "signature": "array.push(id, value)",
+        "params": {
+          "id": "array<any>",
+          "value": "any"
+        },
+        "returns": "void",
+        "notes": "Appends to end of array; prefer capped arrays for performance."
+      },
+      "array.pop": {
+        "signature": "array.pop(id)",
+        "params": {
+          "id": "array<any>"
+        },
+        "returns": "any",
+        "notes": "Removes and returns last element; runtime error if array empty."
+      },
+      "array.shift": {
+        "signature": "array.shift(id)",
+        "params": {
+          "id": "array<any>"
+        },
+        "returns": "any",
+        "notes": "Removes first element and shifts remaining left; O(n) operation."
+      },
+      "array.unshift": {
+        "signature": "array.unshift(id, value)",
+        "params": {
+          "id": "array<any>",
+          "value": "any"
+        },
+        "returns": "void",
+        "notes": "Adds element to start; inefficient on large arrays."
+      },
+      "array.remove": {
+        "signature": "array.remove(id, index)",
+        "params": {
+          "id": "array<any>",
+          "index": "series int"
+        },
+        "returns": "void",
+        "notes": "Removes element at index; O(n). Always bounds-check."
+      },
+      "array.clear": {
+        "signature": "array.clear(id)",
+        "params": {
+          "id": "array<any>"
+        },
+        "returns": "void",
+        "notes": "Empties entire array; memory remains allocated."
+      },
+      "array.size": {
+        "signature": "array.size(id)",
+        "params": {
+          "id": "array<any>"
+        },
+        "returns": "series int",
+        "notes": "Zero if array empty; use before accessing indexes."
+      },
+      "array.includes": {
+        "signature": "array.includes(id, value)",
+        "params": {
+          "id": "array<any>",
+          "value": "any"
+        },
+        "returns": "series bool",
+        "notes": "Linear scan; avoid in tight loops."
+      },
+      "array.indexof": {
+        "signature": "array.indexof(id, value)",
+        "params": {
+          "id": "array<any>",
+          "value": "any"
+        },
+        "returns": "series int (or -1 if not found)",
+        "notes": "Returns first occurrence; linear scan."
+      },
+      "array.sort": {
+        "signature": "array.sort(id, order = order.ascending)",
+        "params": {
+          "id": "array<int|float|string>",
+          "order": "const order (ascending|descending)"
+        },
+        "returns": "void",
+        "notes": "In-place sort; not stable for equal elements."
+      },
+      "array.reverse": {
+        "signature": "array.reverse(id)",
+        "params": {
+          "id": "array<any>"
+        },
+        "returns": "void",
+        "notes": "In-place reversal of array order."
+      },
+      "array.slice": {
+        "signature": "array.slice(id, from, to)",
+        "params": {
+          "id": "array<any>",
+          "from": "series int (inclusive)",
+          "to": "series int (exclusive)"
+        },
+        "returns": "array<any>",
+        "notes": "Does not modify original; creates shallow copy of range."
+      }
+    }
+  }
+}
+
+
+⸻
+
+✅ This is just namespace: array fully serialized.
+⚔️ Next step: serialize barstate, then chart, then continue sequentially until we cover every namespace (math, ta, strategy, request, etc.).
+
+Would you like me to continue with barstate next, so we progress namespace by namespace until the full Pine v6 API is immortalized?
