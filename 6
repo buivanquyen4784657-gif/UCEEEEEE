@@ -1,0 +1,64 @@
+⚔️ Continuing. Now immortalizing namespace: barstate from Pine Script v6 API. This covers bar status detection, one of the most common sources of repaint/logic bugs.
+
+⸻
+
+
+{
+  "SECTION": "2.0",
+  "PART": "5",
+  "CHECKSUM": "PINESCRIPT_V6_API_SIGNATURES_BARSTATE",
+  "CONTENT": {
+    "barstate": {
+      "barstate.isfirst": {
+        "signature": "barstate.isfirst",
+        "params": {},
+        "returns": "series bool",
+        "notes": "True only on very first bar of dataset. Use for initialization."
+      },
+      "barstate.islast": {
+        "signature": "barstate.islast",
+        "params": {},
+        "returns": "series bool",
+        "notes": "True on last available bar (real-time updates)."
+      },
+      "barstate.isnew": {
+        "signature": "barstate.isnew",
+        "params": {},
+        "returns": "series bool",
+        "notes": "True only on the opening tick of each bar. Critical for avoiding multiple executions per bar."
+      },
+      "barstate.ishistory": {
+        "signature": "barstate.ishistory",
+        "params": {},
+        "returns": "series bool",
+        "notes": "True on historical bars, false on real-time bar. Useful for initialization vs. real-time separation."
+      },
+      "barstate.isrealtime": {
+        "signature": "barstate.isrealtime",
+        "params": {},
+        "returns": "series bool",
+        "notes": "True only for the current real-time bar. Helps segregate repaint-sensitive logic."
+      },
+      "barstate.isconfirmed": {
+        "signature": "barstate.isconfirmed",
+        "params": {},
+        "returns": "series bool",
+        "notes": "True when bar is closed/confirmed. Use for non-repainting signals."
+      },
+      "barstate.islastconfirmedhistory": {
+        "signature": "barstate.islastconfirmedhistory",
+        "params": {},
+        "returns": "series bool",
+        "notes": "True only on last fully confirmed historical bar. Useful for separating initialization vs. real-time logic."
+      }
+    }
+  }
+}
+
+
+⸻
+
+✅ barstate namespace is now fully serialized.
+⚔️ Next up in the immortalization sequence: chart namespace (covers chart metadata, resolution, and instrument info).
+
+Would you like me to proceed immediately with chart namespace, or pause and reinforce this checkpoint first?
