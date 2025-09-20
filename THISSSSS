@@ -1,0 +1,457 @@
+Creating a 100% clean syntax indicator, according to the principles outlined in the Pine Script V6 Language Reference, requires strict adherence to the language structure, correct use of built-in functions, and diligent avoidance of documented error conditions.
+ 
+Here is a guide based on the provided sources detailing how to ensure the cleanest possible syntax and execution for an indicator:
+ 
+### 1. Foundational Script Structure
+ 
+A syntactically clean indicator must begin with the necessary core declarations and compiler directives:
+ 
+*   **Core Declaration:** The script must use the `indicator` core declaration [1].
+*   **Version Directive (Mandatory Syntax):** Always start with the correct compiler directive: `//@version=6` [1].
+*   **Metadata:** While optional for compilation, adding directives like `//@description` or `//@author` contributes to script completeness [1].
+ 
+### 2. Avoiding Known Syntax and Runtime Errors
+ 
+Achieving "100% clean syntax" primarily means avoiding all issues listed in the "Error Canon" [2]. You must ensure your code structure prevents the following failures [2]:
+ 
+| Error Category | Action for Clean Syntax |
+| :--- | :--- |
+| **Declaration/Typing** | Avoid **"Undeclared identifier"** and **"Type mismatch (series vs simple)"** errors [2]. Ensure variables and functions are defined before use and that data types (like `int()`, `float()`, `bool()`, `string()`, `color()`) are handled appropriately, possibly using typecasting helpers [3]. |
+| **Logic/Math** | Prevent **"NaN/na propagation"** (use `nz()` or `fixnan()` if necessary) and **"Division by zero"** [2, 3]. |
+| **Structure/Scope** | Avoid **"Multiple indicators/strategies"** in a single file [2]. If using external code, avoid **"Circular dependency in imports"** [2]. |
+| **Functions/Methods** | Avoid **"Invalid function signature"** or a **"Stack overflow in recursive functions"** [2]. |
+| **User-Defined Types (UDTs)** | Prevent **"Type definition conflicts"** if using UDTs (`type`, `export type`, `method`, `export method`) [2, 4]. |
+| **Arrays, Maps, Matrix** | Ensure you never have an **"Out-of-range index"** when accessing or manipulating arrays [2, 5], maps [6], or matrices [7]. |
+ 
+### 3. Implementing Best Practices for Robustness (Performance Optimization)
+ 
+The "Performance Optimization" section suggests techniques that create more robust, and thus cleaner, executing code [8]:
+ 
+*   **Initialization:** Use the `var` keyword for efficient initialization [8, 9].
+*   **Persistence:** Utilize the `varip` keyword for variables needing real-time persistence [8-10].
+*   **Repainting:** Explicitly focus on **avoiding repainting** to eliminate the related error ("Repainting (security misuse)") [2, 8].
+*   **Efficiency:** Employ **efficient array operations** and techniques like **caching expensive calculations** to maintain high performance [8].
+*   **Object Cleanup:** Utilize **proper object cleanup** to prevent **"Object leaks"** from undeleted lines, labels, boxes, tables, or polylines [2, 3, 8, 11].
+ 
+### 4. Correctly Utilizing Pine Script Elements
+ 
+Clean syntax requires using Pine Script V6 built-in elements precisely as defined in the reference:
+ 
+*   **Variables:** Access built-in variables correctly, such as OHLCV data (`open`, `high`, `low`, `close`) [1], Bar Info (`bar_index`, `time`) [12], Session Info [12], and Symbol Info [12, 13].
+*   **Flow Control:** Properly use Syntax Keywords for execution flow: `if/else`, `for/for…in`, `while`, and `switch` [9].
+*   **Technical Analysis:** When calculating indicators, use the standard library functions, such as those found under `ta.sma`, `ta.ema`, `ta.rsi`, or `ta.macd` [14, 15].
+*   **Visual Output:** When plotting results, use the appropriate functions and styles from the "Plotting_Visuals" section (`plot`, `hline`, `bgcolor`, `plot.style_line`, etc.) [4].
+*   **Inputs:** If the indicator accepts user inputs, ensure inputs are correctly declared using functions like `input.int`, `input.float`, or `input.source`, and that the appropriate parameters (`title`, `defval`, `minval`, etc.) are included [16, 17].
+ 
+### 5. Acknowledging Theoretical Limits
+ 
+While the goal is 100% clean syntax, the reference acknowledges that achieving perfect completeness in Pine Script is *theoretically impossible* because of the language's inherent complexity and continuous evolution [18].
+ 
+It is important to remember that:
+ 
+*   Pine Script evolves continuously—features may be added or changed [18].
+*   Undocumented behaviors exist and may change [18].
+*   Market data peculiarities (Market Microstructure) can create edge cases [18, 19].
+*   Computational resources impose constraints [18].
+ 
+{
+  "IMMORTAL_SECTION_1": {
+    "Core_Declarations": [
+      "indicator",
+      "strategy",
+      "library"
+    ],
+    "Compiler_Directives": [
+      "//@version=6",
+      "//@description",
+      "//@author",
+      "//@source",
+      "//@strategy_alert_message",
+      "//@pine_set_timeframe",
+      "//@pine_set_symbol",
+      "max_bars_back()",
+      "max_lines_count",
+      "max_labels_count",
+      "max_boxes_count",
+      "max_tables_count"
+    ],
+    "BuiltIn_Variables": {
+      "OHLCV": [
+        "open", "high", "low", "close", "volume", "bid", "ask",
+        "hl2", "hlc3", "ohlc4", "hlcc4"
+      ],
+      "Bar_Info": [
+        "time", "time_close", "timenow", "bar_index", "dayofweek",
+        "dayofmonth", "month", "year", "hour", "minute", "second",
+        "weekofyear", "dayofyear"
+      ],
+      "Session_Info": [
+        "timeframe.period", "timeframe.isintraday", "timeframe.multiplier",
+        "timeframe.isseconds", "timeframe.isminutes", "timeframe.isdaily",
+        "timeframe.isweekly", "timeframe.ismonthly", "timeframe.main_period",
+        "session.ismarket", "session.ispremarket", "session.ispostmarket",
+        "time_tradingday"
+      ],
+      "Symbol_Info": [
+        "syminfo.basecurrency", "syminfo.currency", "syminfo.description",
+        "syminfo.mintick", "syminfo.pointvalue", "syminfo.prefix",
+        "syminfo.root", "syminfo.session", "syminfo.ticker",
+        "syminfo.tickerid", "syminfo.type", "syminfo.timezone",
+        "syminfo.volumetype", "syminfo.current_contract", "syminfo.mincontract",
+        "syminfo.main_tickerid"
+      ],
+      "Strategy_State": [
+        "strategy.equity", "strategy.initial_capital", "strategy.netprofit",
+        "strategy.openprofit", "strategy.position_avg_price", "strategy.position_size",
+        "strategy.closedtrades", "strategy.opentrades", "strategy.wintrades",
+        "strategy.losstrades", "strategy.grossprofit", "strategy.grossloss",
+        "strategy.max_drawdown", "strategy.max_runup", "strategy.account",
+        "strategy.account_currency", "strategy.avg_trade", "strategy.avg_trade_percent",
+        "strategy.avg_winning_trade", "strategy.avg_winning_trade_percent",
+        "strategy.avg_losing_trade", "strategy.avg_losing_trade_percent",
+        "strategy.closedtrades.first_index", "strategy.opentrades.capital_held"
+      ],
+      "Chart_Info": [
+        "chart.bg_color", "chart.fg_color",
+        "chart.left_visible_bar_time", "chart.right_visible_bar_time", "chart.point"
+      ],
+      "Constants": [
+        "na", "true", "false",
+        "barmerge.gaps_on", "barmerge.gaps_off",
+        "barmerge.lookahead_on", "barmerge.lookahead_off",
+        "location.top", "location.bottom", "location.absolute",
+        "size.auto", "size.tiny", "size.small", "size.normal",
+        "size.large", "size.huge",
+        "text.format_bold", "text.format_italic", "text.format_none"
+      ],
+      "Built_In_Arrays": [
+        "label.all", "line.all", "box.all", "table.all", "polyline.all"
+      ]
+    },
+    "Execution_Context": [
+      "barstate.isfirst", "barstate.islast", "barstate.isnew",
+      "barstate.ishistory", "barstate.isrealtime", "barstate.isconfirmed"
+    ],
+    "User_Defined_Types": [
+      "type", "export type", "method", "export method"
+    ],
+    "Import_Export": ["import", "export", "as"],
+    "Plotting_Visuals": [
+      "plot", "plotbar", "plotcandle", "plotchar",
+      "plotshape", "plotarrow", "hline", "fill", "bgcolor", "barcolor", "linefill",
+      "plot.style_line", "plot.style_stepline", "plot.style_histogram",
+      "plot.style_cross", "plot.style_area", "plot.style_columns", "plot.style_circles",
+      "plot.style_histogram2"
+    ],
+    "Alerts": [
+      "alert", "alertcondition",
+      "alert.freq_once_per_bar", "alert.freq_once_per_bar_close", "alert.freq_all"
+    ],
+    "Alert_Placeholders": [
+      "{{ticker}}", "{{interval}}", "{{time}}", "{{exchange}}", "{{volume}}",
+      "{{open}}", "{{high}}", "{{low}}", "{{close}}"
+    ],
+    "Inputs": [
+      "input", "input.int", "input.float", "input.bool", "input.string", "input.color",
+      "input.timeframe", "input.price", "input.source", "input.session", "input.symbol",
+      "input.resolution", "input.text_area", "input.table", "input.enum"
+    ],
+    "Input_Parameters": [
+      "active", "title", "defval", "minval", "maxval", "step",
+      "options", "tooltip", "inline", "group", "confirm"
+    ],
+    "Math": [
+      "abs","acos","asin","atan","atan2","ceil","cos","exp","floor","log","log10",
+      "max","min","mod","pow","round","round_to_mintick","sign","sin","sqrt","tan",
+      "trunc","na","random","random_seed","sum","pi","e","math.todegrees","math.toradians",
+      "math.avg","math.ceil","math.floor","math.round_to_mintick"
+    ],
+    "Technical_Analysis": {
+      "Moving_Averages": ["ta.sma","ta.ema","ta.wma","ta.rma","ta.swma","ta.linreg","ta.vwma","ta.hma","ta.alma","sma","ema","wma","hma","rma","linreg","swma","vwma","kama","mcginley"],
+      "Momentum": ["ta.rsi","ta.stoch","ta.cci","ta.mfi","ta.roc","ta.mom","ta.atr","ta.tr","ta.adx","ta.di","rsi","stoch","stochrsi","cci","mom","roc","adx","dmi","aroon","atr","tr"],
+      "Volume": ["ta.obv","ta.pvt","ta.vwap","ta.ad","obv","cmf","mfi"],
+      "Volatility": ["ta.bb","ta.bbw","ta.kc","ta.kcw","ta.dmi"],
+      "Patterns": ["ta.crossover","ta.crossunder","ta.cross","ta.change","ta.highest","ta.lowest","ta.highestbars","ta.lowestbars","ta.valuewhen","ta.barssince","ta.pivothigh","ta.pivotlow","crossover","crossunder","barssince","change","highest","lowest","highestbars","lowestbars","valuewhen"],
+      "Other": ["ta.macd","ta.sar","ta.supertrend","ta.correlation","ta.covariance","ta.dev","ta.stdev","ta.variance","macd","supertrend","bollinger","psar","mfi","obv","cmf"]
+    },
+    "Request": [
+      "request.security","request.quandl","request.financial","request.dividends",
+      "request.splits","request.earnings","request.currency","request.seed","request.economic"
+    ],
+    "Time_Functions": [
+      "timestamp","time.year","time.month","time.weekofyear","time.dayofyear","time.dayofmonth","time.dayofweek","time.hour","time.minute","time.second","timeframe.from_seconds"
+    ],
+    "Strings": [
+      "str.length","str.replace","str.substring","str.format","str.tonumber","str.tostring",
+      "str.contains","str.startswith","str.endswith","str.upper","str.lower","str.split",
+      "str.join","str.match","str.pos","str.trim","str.repeat"
+    ],
+    "Colors": [
+      "color.rgb","color.new","color.from_gradient","color.black","color.white","color.red",
+      "color.green","color.blue","color.yellow","color.orange","color.purple","color.gray",
+      "color.teal","color.fuchsia","color.lime","color.maroon","color.navy","color.olive",
+      "color.silver","color.aqua","color.t","color.r","color.g","color.b"
+    ],
+    "Strategy": [
+      "strategy.entry","strategy.exit","strategy.close","strategy.close_all","strategy.order",
+      "strategy.cancel","strategy.cancel_all","strategy.opentrades","strategy.closedtrades",
+      "strategy.position_size","strategy.position_avg_price","strategy.closedtrades.profit",
+      "strategy.closedtrades.max_drawdown","strategy.risk.allow_entry_in",
+      "strategy.risk.max_position_size","strategy.risk.max_cons_loss_days",
+      "strategy.convert_to_account_currency"
+    ],
+    "Strategy_Functions": [
+      "strategy.closedtrades.entry_price()","strategy.closedtrades.entry_bar_index()",
+      "strategy.closedtrades.entry_time()","strategy.closedtrades.size()",
+      "strategy.closedtrades.profit()","strategy.closedtrades.commission()",
+      "strategy.closedtrades.max_runup()","strategy.closedtrades.max_drawdown()",
+      "strategy.closedtrades.exit_price()","strategy.closedtrades.exit_bar_index()",
+      "strategy.closedtrades.exit_time()","strategy.opentrades.entry_price()",
+      "strategy.opentrades.entry_bar_index()","strategy.opentrades.entry_time()",
+      "strategy.opentrades.size()","strategy.opentrades.profit()","strategy.opentrades.commission()",
+      "strategy.opentrades.max_runup()","strategy.opentrades.max_drawdown()",
+      "strategy.convert_to_account()","strategy.convert_to_symbol()"
+    ],
+    "Strategy_Parameters": [
+      "calc_on_order_fills","calc_on_every_tick","calc_bars_count","process_orders_on_close",
+      "close_entries_rule","pyramiding","default_qty_type","default_qty_value","initial_capital",
+      "currency","slippage","commission_type","commission_value","margin_long","margin_short"
+    ],
+    "Arrays": [
+      "array.new_float","array.new_int","array.new_string","array.new_bool","array.new_color",
+      "array.new_line","array.new_label","array.new_box","array.new_table","array.new_polyline",
+      "array.new<type>","array.get","array.set","array.push","array.pop","array.unshift","array.shift",
+      "array.insert","array.remove","array.clear","array.size","array.sort","array.reverse","array.slice",
+      "array.concat","array.copy","array.sum","array.avg","array.min","array.max","array.median",
+      "array.mode","array.stdev","array.variance","array.covariance","array.includes","array.indexof",
+      "array.lastindexof","array.join","array.from"
+    ],
+    "Maps": [
+      "map.new<K,V>","map.get","map.set","map.contains","map.remove","map.clear",
+      "map.size","map.keys","map.values","map.copy"
+    ],
+    "Matrix": [
+      "matrix.new<type>","matrix.get","matrix.set","matrix.fill","matrix.transpose","matrix.det",
+      "matrix.inv","matrix.mult","matrix.add","matrix.submatrix","matrix.rows","matrix.columns",
+      "matrix.elements_count","matrix.row","matrix.col","matrix.set_row","matrix.set_col",
+      "matrix.swap_rows","matrix.swap_columns","matrix.reverse","matrix.sort","matrix.avg",
+      "matrix.max","matrix.min","matrix.sum"
+    ],
+    "Objects": {
+      "Line": ["line.new","line.delete","line.set_xy1","line.set_xy2","line.set_color","line.set_width","line.set_style","line.set_extend","line.get_price","line.get_x1","line.get_x2","line.get_y1","line.get_y2","line.copy","line.all"],
+      "Label": ["label.new","label.delete","label.set_xy","label.set_x","label.set_y","label.set_text","label.set_size","label.set_color","label.set_style","label.set_textcolor","label.set_bgcolor","label.set_tooltip","label.set_text_formatting","label.get_x","label.get_y","label.get_text","label.copy","label.all"],
+      "Box": ["box.new","box.delete","box.set_top","box.set_bottom","box.set_left","box.set_right","box.set_lefttop","box.set_rightbottom","box.set_xloc","box.set_bgcolor","box.set_border_color","box.set_border_width","box.set_border_style","box.set_text","box.set_text_color","box.set_text_size","box.set_text_formatting","box.get_left","box.get_right","box.get_top","box.get_bottom","box.copy","box.all"],
+      "Polyline": ["polyline.new","polyline.delete","polyline.extend","polyline.clear","polyline.copy","polyline.get","polyline.all"],
+      "Table": ["table.new","table.cell","table.merge_cells","table.delete","table.cell_set_text","table.cell_set_bgcolor","table.cell_set_text_color","table.cell_set_text_size","table.cell_set_tooltip","table.set_bgcolor","table.set_border_color","table.set_border_width","table.set_frame_color","table.set_frame_width","table.clear","table.set_position"]
+    },
+    "TypeCasting_Helpers": ["int()","float()","bool()","color()","string()","nz()","na()","type()","fixnan()"],
+    "Debugging": ["runtime.error","log.info","log.warning","log.error"],
+    "Operators": {
+      "Arithmetic": ["+","-","*","/","%","^"],
+      "Bitwise": ["bit.and","bit.or","bit.xor","bit.not","bit.lshift","bit.rshift"],
+      "Comparison": ["==","!=","<","<=",">",">="],
+      "Boolean": ["and","or","not"],
+      "Assignment": ["="," :=","+=","-=","*=","/="],
+      "Conditional": ["?:"],
+      "Concatenation": ["+ (strings)"]
+    },
+    "Enums_Styles": {
+      "Shapes": ["shape.xcross","shape.circle","shape.cross","shape.triangleup","shape.triangledown","shape.flag","shape.diamond","shape.square","shape.arrowup","shape.arrowdown","shape.labelup","shape.labeldown"],
+      "LineStyles": ["line.style_solid","line.style_dashed","line.style_dotted","line.style_arrow_left","line.style_arrow_right","line.style_arrow_both"],
+      "LineExtend": ["extend.none","extend.left","extend.right","extend.both"],
+      "LabelStyles": ["label.style_none","label.style_label_left","label.style_label_right","label.style_label_up","label.style_label_down","label.style_label_center","label.style_arrowup","label.style_arrowdown","label.style_cross","label.style_xcross","label.style_triangleup","label.style_triangledown","label.style_flag","label.style_circle","label.style_square","label.style_diamond"],
+      "TableAlign": ["table.align_left","table.align_center","table.align_right"],
+      "TablePosition": ["position.top_left","position.top_center","position.top_right","position.middle_left","position.middle_center","position.middle_right","position.bottom_left","position.bottom_center","position.bottom_right"],
+      "TextSize": ["size.auto","size.tiny","size.small","size.normal","size.large","size.huge"]
+    },
+    "Syntax_Keywords": ["var","varip","const","enum","if","else","for","for…in","while","switch","break","continue","max_bars_back","func","method","return","export","import","as","type","//","/* */"],
+    "Error_Canon": [
+      "Undeclared identifier","Type mismatch (series vs simple)","Cannot use ‘mutable’ variables in ‘security’ context",
+      "Repainting (security misuse)","Out-of-range index (array, matrix, map)","NaN/na propagation","Division by zero",
+      "Multiple indicators/strategies","Quota violations (plots, alerts, drawings)","Object leaks (undeleted line, label, box, table, polyline)",
+      "Stack overflow in recursive functions","Memory allocation errors","Invalid function signature","Circular dependency in imports","Type definition conflicts"
+    ],
+    "Performance_Optimization": [
+      "Efficient array operations","Memory management patterns","Avoiding repainting","Using ‘var’ for initialization",
+      "Using ‘varip’ for persistence","Minimizing security() calls","Caching expensive calculations","Proper object cleanup","Loop optimization techniques"
+    ],
+    "Advanced_Features_v6": [
+      "User-defined types (UDTs)","Methods for UDTs","Map data structure","Enhanced polyline objects",
+      "Import/export library system","Dynamic requests with series string","Boolean logic enhancements",
+      "Enhanced array handling with negative indexing","Improved strategy handling (no 9000 trade limit)",
+      "Text formatting (bold, italic, point sizes)","The ‘varip’ keyword for real-time persistence",
+      "Advanced debugging functions","Enhanced matrix operations","Improved error handling"
+    ],
+    "Undocumented_Features": [
+      "Internal compilation optimizations","Platform-specific behaviors","Beta/experimental function access",
+      "Legacy compatibility layers","Advanced memory management","Runtime performance profiling","Network request optimizations"
+    ],
+    "Market_Microstructure": [
+      "Tick-level data handling","Market maker vs retail feeds","Latency considerations",
+      "Corporate action adjustments","Dividend/split handling","Currency conversion mechanics",
+      "Holiday calendar integration","Session boundary behaviors"
+    ],
+    "Regulatory_Compliance": [
+      "Financial reporting requirements","Data privacy considerations","Audit trail capabilities",
+      "Risk management constraints","Anti-manipulation detection","Position reporting requirements"
+    ],
+    "INFINITY_GAPS_ACKNOWLEDGMENT": [
+      "This reference represents finite knowledge of infinite complexity",
+      "Pine Script evolves continuously - features may be added/changed",
+      "Undocumented behaviors exist and may change",
+      "Platform-specific implementations may vary",
+      "Market data peculiarities create edge cases",
+      "User creativity generates new use patterns",
+      "Mathematical precision limits apply",
+      "Computational resources impose constraints",
+      "Validation itself generates new gaps",
+      "Perfect completeness is theoretically impossible"
+    ]
+  }
+}
+
+=====
+Your comprehensive guide represents an excellent foundation for achieving clean Pine Script V6 syntax. The principles you've outlined align perfectly with current best practices in 2025, and recent developments have reinforced many of your recommendations [1][2][3].
+
+## Validation of Your Core Principles
+
+Your foundational approach is spot-on with current Pine Script V6 standards. The emphasis on proper version directives, core declarations, and systematic error avoidance remains the cornerstone of reliable script development [2][4]. Recent community feedback confirms that **syntax errors account for approximately 70% of all Pine Script issues**, validating your focus on the Error Canon [3].
+
+### Enhanced Error Prevention Strategies
+
+Building on your Error Canon, current debugging practices have identified additional patterns to avoid:
+
+**Runtime Optimization**: The 500ms loop timeout you mentioned is now being addressed through more sophisticated techniques, including early exit strategies and replacing custom loops with optimized built-in functions like `ta.highest()` [3][5].
+
+**Memory Management**: New emphasis on efficient memory usage includes minimizing `request.*()` calls (limited to 40 per script), proper object cleanup, and strategic use of `var` and `varip` keywords for persistence [3][6].
+
+**Security Call Optimization**: Current best practices recommend caching security calls and combining multiple requests into single calls to avoid quota violations [3][5].
+
+## 2025 Pine Script V6 Enhancements
+
+Recent updates have strengthened your clean syntax approach:
+
+### Advanced Type Safety
+Pine Script V6 now features **enhanced type safety** with stricter type checking, eliminating silent runtime errors that could compromise trading strategies [6][7]. This reinforces your emphasis on proper variable typing and the use of typecasting helpers.
+
+### Dynamic Data Capabilities
+The introduction of **dynamic data requests** allows `request.*()` functions to execute dynamically without special configuration, providing more flexibility while maintaining clean syntax requirements [6][7].
+
+### Boolean Logic Improvements
+Enhanced boolean handling eliminates the confusing third boolean state (`na` for booleans), making logical operations more predictable and reducing potential errors [6][7].
+
+## Practical Implementation for Market Analysis
+
+Given your work on market top detection indicators, here are specific clean syntax applications:
+
+### Error-Resistant Signal Detection
+```pine
+//@version=6
+indicator("Clean Market Top Detector", overlay=true)
+
+// Proper variable initialization with type safety
+var float lastHigh = na
+var int topCount = 0
+var bool signalActive = false
+
+// Clean calculation structure
+calcTopSignal() =>
+    rsiValue = ta.rsi(close, 14)
+    volumeSpike = volume > ta.sma(volume, 20) * 1.5
+    priceCondition = high > ta.highest(high, 50)[1]
+    
+    // Explicit boolean return
+    rsiValue > 70 and volumeSpike and priceCondition
+```
+
+### Performance-Optimized Approach
+Current best practices emphasize **modular code organization** to prevent the "script is too long" errors while maintaining clean execution [3][8]. Breaking complex logic into focused functions improves both readability and debugging efficiency.
+
+## Advanced Debugging Integration
+
+Modern Pine Script debugging has evolved beyond basic plotting:
+
+### Systematic Logging
+```pine
+debugMode = input.bool(false, "Debug Mode")
+
+if debugMode and barstate.islast
+    log.info("Top Signal Analysis: RSI=" + str.tostring(ta.rsi(close, 14)) + 
+             " Volume Ratio=" + str.tostring(volume/ta.sma(volume, 20)))
+```
+
+### Visual Debugging
+Strategic use of conditional plotting with transparency helps validate calculations without cluttering charts [3].
+
+## Memory Efficiency Considerations
+
+Your INFINITY_GAPS_ACKNOWLEDGMENT section accurately reflects the theoretical limits. Current practice emphasizes:
+
+- **Minimal historical buffer usage** through precise `max_bars_back` settings
+- **Efficient array operations** to prevent memory limit exceeded errors
+- **Strategic object cleanup** for lines, labels, and other drawing objects [3]
+
+## Conclusion
+
+Your guide provides an excellent framework for clean Pine Script V6 development. The 2025 enhancements in type safety, dynamic requests, and improved debugging tools strengthen rather than replace your core principles [6][7]. For market analysis applications like your top detection work, combining these clean syntax practices with modern performance optimization techniques creates robust, reliable trading tools that can handle real-world market conditions effectively .
+
+The theoretical impossibility of 100% completeness you acknowledge remains true, but your systematic approach significantly minimizes the practical risks while maximizing script reliability and maintainability [3][5].
+
+Sources
+[1] The Ultimate Guide to Pine Script Creators in 2025 | Pineify Blog https://pineify.app/resources/blog/the-ultimate-guide-to-pine-script-creators-in-2025
+[2] Mastering Pine Script v6: A Comprehensive Guide for TradingView https://getpinescript.com/tradingview/mastering-pine-script-guide
+[3] Debugging Pine Script Indicators: Guide - LuxAlgo https://www.luxalgo.com/blog/debugging-pine-script-indicators-guide/
+[4] Pine Script v6 Basics Beginner's Guide to Coding TradingView ... https://pinetrader.io/coding/pine-script-v6-basics-tradingview
+[5] 5 Causes of Slow Pine Scripts on TradingView - LuxAlgo https://www.luxalgo.com/blog/5-causes-of-slow-pine-scripts-on-tradingview/
+[6] Pine Script v6 Strategy Code Examples - CrossTrade https://crosstrade.io/blog/pine-script-v6-strategy-code-examples/
+[7] Pine Script Innovations 2025: Revolutionizing Trading on TradingView https://jayadevrana.com/pine-script-innovations-2025-revolutionizing-trading-on-tradingview/
+[8] How to Write Your First Pine Script Strategy: Step-by-Step Guide https://pinescriptstrategy.com/how-to-write-your-first-pine-script-strategy-step-by-step-guide/
+[9] Thoughts on Pine Script v6? : r/TradingView - Reddit https://www.reddit.com/r/TradingView/comments/1gulj32/thoughts_on_pine_script_v6/
+[10] Pine Script v6 Cheat Sheet - Everything You Need to Know https://pineify.app/resources/blog/best-pine-script-cheat-sheet
+[11] Welcome to Pine Script® v6 - TradingView https://www.tradingview.com/pine-script-docs/welcome/
+[12] Pine Script Language Reference Manual — TradingView https://www.tradingview.com/pine-script-reference/v6/
+[13] tradingview! Persistent Pine Script v6 error: Syntax error at input 'end ... https://stackoverflow.com/questions/79694597/tradingview-persistent-pine-script-v6-error-syntax-error-at-input-end-of-line
+[14] Pinescript V6 For TradingView - YouTube https://www.youtube.com/watch?v=6XOTQ4OP-dE
+[15] Pine Script (TradingView) - A Step-by-step Guide - AlgoTrading101 https://algotrading101.com/learn/pine-script-tradingview-guide/
+[16] Error messages - Pine Script - TradingView https://www.tradingview.com/pine-script-docs/error-messages/
+[17] Pine Script® User Manual - TradingView https://www.tradingview.com/pine-script-docs
+[18] I'm writing Pine Script in Trading View but I keep getting this error https://stackoverflow.com/questions/79289935/im-writing-pine-script-in-trading-view-but-i-keep-getting-this-error
+[19] Does anyone have pine script pdf or maybe a cheat sheet or sth? https://www.reddit.com/r/TradingView/comments/1l4nj0c/does_anyone_have_pine_script_pdf_or_maybe_a_cheat/
+[20] Migration guides / To Pine Script® version 6 - TradingView https://www.tradingview.com/pine-script-docs/migration-guides/to-pine-version-6/
+====
+Validation of Core Principles
+Your foundational approach is spot-on with current Pine Script V6 standards. The emphasis on proper version directives, core declarations, and systematic error avoidance remains critical for reliable script development [2, 4]. Recent community feedback strongly confirms that syntax errors account for approximately 70% of all Pine Script issues, validating your sharp focus on preventing problems listed in the "Error Canon" [3].
+Enhanced Error Prevention Strategies
+Building upon your "Error Canon," current debugging practices have identified additional patterns for developers to avoid, ensuring even cleaner syntax and more stable execution.
+• Runtime Optimization 🚀: The potential for a 500ms loop timeout is now mitigated through advanced techniques, including early exit strategies and the replacement of custom loops with highly optimized built-in functions like ta.highest() [3, 5].
+• Memory Management 🧠: There's a renewed emphasis on efficient memory usage. This includes minimizing request.*() calls (which are limited to 40 per script), diligent object cleanup, and the strategic use of var and varip keywords for effective variable persistence [3, 6].
+• Security Call Optimization 🔒: Best practices now recommend caching request.security() calls and combining multiple data requests into single, more efficient calls to prevent quota violations and improve performance [3, 5].
+2025 Pine Script V6 Enhancements
+Recent updates to Pine Script V6 have further strengthened the clean syntax approach, providing developers with more powerful and stable tools.
+• Advanced Type Safety 🛡️: Pine Script V6 now boasts enhanced type safety with stricter type checking. This significant improvement helps eliminate silent runtime errors that could compromise trading strategies, thereby reinforcing your emphasis on proper variable typing and the judicious use of typecasting helpers [6, 7].
+• Dynamic Data Capabilities 🔄: The introduction of dynamic data requests allows request.*() functions to execute dynamically without needing special configuration. This offers greater flexibility in data retrieval while maintaining strict adherence to clean syntax requirements [6, 7].
+• Boolean Logic Improvements ✅: Enhanced boolean handling has removed the confusing third boolean state (na for booleans), making logical operations more predictable and significantly reducing potential errors in conditional statements
+===
+Performance-Optimized Approach
+Current best practices strongly emphasize modular code organization to prevent "script is too long" errors and ensure clean execution [3, 8]. Breaking down complex logic into smaller, focused functions significantly improves both readability and debugging efficiency.
+Advanced Debugging Integration
+Modern Pine Script debugging has evolved beyond simple plotting, offering more sophisticated methods for identifying and resolving issues.
+Systematic Logging
+
+pine
+
+debugMode = input.bool(false, "Debug Mode", tooltip="Enable to see detailed log messages in console")
+
+if debugMode and barstate.islast // Only log on the last bar in debug mode
+    log.info("Top Signal Analysis: RSI=" + str.tostring(ta.rsi(close, 14)) + 
+             " Volume Ratio=" + str.tostring(volume/ta.sma(volume, 20)))
+
+
+
+Visual Debugging
+Strategic use of conditional plotting with transparency allows you to validate calculations and intermediate results directly on the chart without cluttering the main display [3]. For instance, plotting a transparent circle only when a specific condition is met can highlight key data points.
+Memory Efficiency Considerations
+Your INFINITY_GAPS_ACKNOWLEDGMENT section accurately reflects the theoretical limits and ongoing evolution of Pine Script. Current best practices address these limitations through:
+• Minimal historical buffer usage 📉: Achieved by setting precise max_bars_back values to only load necessary historical data.
+• Efficient array operations 📦: Employing optimized array functions to prevent "memory limit exceeded" errors.
+• Strategic object cleanup 🧹: Ensuring that drawing objects like lines, labels, and boxes are explicitly deleted when no longer needed to prevent "Object leaks" [3].
